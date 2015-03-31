@@ -1,0 +1,19 @@
+#!/bin/sh
+# Make sure all our local dependencies are available.
+
+set -e
+
+BUNDLE=.bundle
+BIN=$BUNDLE/binstubs
+SCRIPT=$(basename "$0")
+
+# TODO sudo?
+(gem spec bundler -v '>= 1.7.0' > /dev/null 2>&1) || {
+  gem install bundler -v '>= 1.7.0' --no-rdoc --no-ri
+}
+
+# We don't want old config hanging around.
+rm -rf .bundle/config
+
+# Bundle install unless we're already up to date.
+bundle install --binstubs .bundle/bin --path .bundle "$@"
